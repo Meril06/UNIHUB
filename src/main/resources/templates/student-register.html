@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>UNIHUB – Student Register</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --ink: #0d0f14; --paper: #f5f3ee; --cream: #ede9e0;
+            --gold: #c9a84c; --gold-dark: #a8862e; --muted: #7a7468; --error: #c0392b; --success: #27ae60;
+        }
+        body { min-height: 100vh; display: flex; background: var(--paper); font-family: 'DM Sans', sans-serif; overflow-x: hidden; }
+        .left-panel {
+            width: 52%; background: var(--ink); position: relative;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 3.5rem; overflow: hidden;
+            animation: slideLeft .6s cubic-bezier(.22,1,.36,1) both;
+        }
+        .left-panel::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(201,168,76,.08) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(201,168,76,.08) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .left-panel::after {
+            content: ''; position: absolute; top: 0; left: 0;
+            width: 4px; height: 100%;
+            background: linear-gradient(180deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%);
+        }
+        .watermark {
+            position: absolute; top: -0.1em; left: -0.05em;
+            font-family: 'Playfair Display', serif; font-size: 32vw; font-weight: 900;
+            color: rgba(255,255,255,.03); line-height: 1; user-select: none; pointer-events: none;
+        }
+        .brand { position: relative; z-index: 1; }
+        .brand-name { font-family: 'Playfair Display', serif; font-size: 4.2rem; font-weight: 900; color: #fff; letter-spacing: -0.02em; line-height: 1; }
+        .brand-name span { color: var(--gold); }
+        .brand-tagline { margin-top: 1rem; font-size: 0.95rem; color: rgba(255,255,255,.45); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; }
+        .role-badge { margin-top: 1.5rem; display: inline-block; background: var(--gold); color: var(--ink); font-size: 0.78rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; padding: 0.4rem 1rem; border-radius: 4px; }
+        .features { margin-top: 2rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .feature { display: flex; align-items: center; gap: 0.9rem; color: rgba(255,255,255,.55); font-size: 0.88rem; }
+        .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+        .right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; overflow-y: auto; }
+        .form-card { width: 100%; max-width: 440px; position: relative; z-index: 1; animation: slideUp .65s .1s cubic-bezier(.22,1,.36,1) both; padding: 1rem 0; }
+        .form-header { margin-bottom: 2rem; }
+        .form-header h2 { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+        .form-header p { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+        .form-header::after { content: ''; display: block; width: 40px; height: 3px; background: var(--gold); margin-top: 1rem; border-radius: 2px; }
+        .field { margin-bottom: 1.2rem; }
+        .field label { display: block; font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.5rem; }
+        .field input, .field select {
+            width: 100%; padding: 0.85rem 1.1rem; border: 1.5px solid #d9d4c8;
+            border-radius: 8px; background: #fff; font-family: 'DM Sans', sans-serif;
+            font-size: 0.95rem; color: var(--ink); transition: border-color 0.2s, box-shadow 0.2s; outline: none;
+        }
+        .field input::placeholder { color: #bab5aa; }
+        .field input:focus, .field select:focus { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); }
+        .field select { appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%237a7468' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1.1rem center; padding-right: 2.5rem; cursor: pointer; }
+        .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+        .error-msg { background: #fdf0f0; border: 1px solid #e8b4b4; color: var(--error); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; margin-bottom: 1.2rem; }
+        .success-msg { background: #f0fdf5; border: 1px solid #b8edc8; color: var(--success); padding: 0.75rem 1rem; border-radius: 8px; font-size: 0.88rem; margin-bottom: 1.2rem; }
+        .btn-register { width: 100%; padding: 0.95rem; background: var(--ink); color: #fff; font-family: 'DM Sans', sans-serif; font-size: 0.95rem; font-weight: 500; letter-spacing: 0.06em; border: none; border-radius: 8px; cursor: pointer; position: relative; overflow: hidden; transition: background 0.25s, transform 0.1s; }
+        .btn-register::after { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, transparent 40%, rgba(201,168,76,.18) 100%); }
+        .btn-register:hover { background: #1a1e28; }
+        .btn-register:active { transform: scale(0.985); }
+        .back-link { text-align: center; margin-top: 1.2rem; font-size: 0.88rem; color: var(--muted); }
+        .back-link a { color: var(--gold-dark); font-weight: 500; text-decoration: none; }
+        .back-link a:hover { text-decoration: underline; }
+        @keyframes slideLeft { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes slideUp   { from { opacity:0; transform: translateY(24px); } to { opacity:1; transform: translateY(0); } }
+        @media (max-width: 700px) {
+            body { flex-direction: column; }
+            .left-panel { width: 100%; min-height: 200px; padding: 2rem; justify-content: center; }
+            .features { display: none; }
+            .brand-name { font-size: 2.8rem; }
+            .field-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <div class="watermark">S</div>
+        <div class="brand">
+            <div class="brand-name">UNI<span>HUB</span></div>
+            <div class="brand-tagline">Student Academic Support System</div>
+            <div class="role-badge">Student Registration</div>
+            <div class="features">
+                <div class="feature"><div class="feature-dot"></div>Create your student account</div>
+                <div class="feature"><div class="feature-dot"></div>Track attendance & assignments</div>
+                <div class="feature"><div class="feature-dot"></div>Explore scholarship opportunities</div>
+                <div class="feature"><div class="feature-dot"></div>One dashboard for everything academic</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Create Account</h2>
+                <p>Register to access your student dashboard</p>
+            </div>
+
+            <div class="error-msg" th:if="${error}" th:text="${error}"></div>
+            <div class="success-msg" th:if="${success}" th:text="${success}"></div>
+
+            <form action="/student-register" method="post">
+                <div class="field">
+                    <label for="name">Full Name</label>
+                    <input type="text" id="name" name="name" placeholder="e.g. Priya Sharma" required>
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="username">Username</label>
+                        <input type="text" id="username" name="username" placeholder="e.g. priya2024" required autocomplete="username">
+                    </div>
+                    <div class="field">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" name="email" placeholder="you@college.edu" required>
+                    </div>
+                </div>
+                <div class="field">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" placeholder="Create a password" required autocomplete="new-password">
+                </div>
+                <div class="field-row">
+                    <div class="field">
+                        <label for="department">Department</label>
+                        <select id="department" name="department" required>
+                            <option value="" disabled selected>Select dept.</option>
+                            <option value="CSE">CSE</option>
+                            <option value="ECE">ECE</option>
+                            <option value="EEE">EEE</option>
+                            <option value="MECH">MECH</option>
+                            <option value="CIVIL">CIVIL</option>
+                            <option value="IT">IT</option>
+                            <option value="AIDS">AIDS</option>
+                            <option value="AIML">AIML</option>
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label for="year">Year</label>
+                        <select id="year" name="year" required>
+                            <option value="" disabled selected>Select year</option>
+                            <option value="1">1st Year</option>
+                            <option value="2">2nd Year</option>
+                            <option value="3">3rd Year</option>
+                            <option value="4">4th Year</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-register">Create Student Account</button>
+            </form>
+
+            <div class="back-link">
+                Already have an account? <a href="/student-login">Sign In →</a>
+            </div>
+            <div class="back-link" style="margin-top:0.5rem;">
+                <a href="/">← Back to Home</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

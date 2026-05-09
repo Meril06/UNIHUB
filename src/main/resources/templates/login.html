@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>UNIHUB – Login</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --ink: #0d0f14; --paper: #f5f3ee; --cream: #ede9e0; --gold: #c9a84c; --gold-dark: #a8862e; --muted: #7a7468; }
+        body { min-height: 100vh; display: flex; background: var(--paper); font-family: 'DM Sans', sans-serif; overflow: hidden; }
+        .left-panel {
+            width: 52%; background: var(--ink); position: relative;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 3.5rem; overflow: hidden;
+            animation: slideLeft .6s cubic-bezier(.22,1,.36,1) both;
+        }
+        .left-panel::before {
+            content: ''; position: absolute; inset: 0;
+            background-image: linear-gradient(rgba(201,168,76,.08) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(201,168,76,.08) 1px, transparent 1px);
+            background-size: 60px 60px;
+        }
+        .watermark { position: absolute; top: -0.1em; left: -0.05em; font-family: 'Playfair Display', serif; font-size: 32vw; font-weight: 900; color: rgba(255,255,255,.03); line-height: 1; user-select: none; pointer-events: none; }
+        .left-panel::after { content: ''; position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: linear-gradient(180deg, transparent 0%, var(--gold) 30%, var(--gold) 70%, transparent 100%); }
+        .brand { position: relative; z-index: 1; }
+        .brand-name { font-family: 'Playfair Display', serif; font-size: 4.2rem; font-weight: 900; color: #fff; letter-spacing: -0.02em; line-height: 1; }
+        .brand-name span { color: var(--gold); }
+        .brand-tagline { margin-top: 1rem; font-size: 0.95rem; color: rgba(255,255,255,.45); font-weight: 300; letter-spacing: 0.12em; text-transform: uppercase; }
+        .features { margin-top: 2.5rem; display: flex; flex-direction: column; gap: 0.75rem; }
+        .feature { display: flex; align-items: center; gap: 0.9rem; color: rgba(255,255,255,.55); font-size: 0.88rem; }
+        .feature-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+        .right-panel { flex: 1; display: flex; align-items: center; justify-content: center; padding: 2rem; position: relative; }
+        .form-card { width: 100%; max-width: 420px; position: relative; z-index: 1; animation: slideUp .65s .1s cubic-bezier(.22,1,.36,1) both; }
+        .form-header { margin-bottom: 2.5rem; }
+        .form-header h2 { font-family: 'Playfair Display', serif; font-size: 2.1rem; font-weight: 700; color: var(--ink); letter-spacing: -0.02em; }
+        .form-header p { margin-top: 0.5rem; color: var(--muted); font-size: 0.9rem; }
+        .form-header::after { content: ''; display: block; width: 40px; height: 3px; background: var(--gold); margin-top: 1rem; border-radius: 2px; }
+
+        /* Portal buttons */
+        .portal-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.2rem; margin-bottom: 2rem; }
+        .portal-btn {
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            padding: 2rem 1rem; border-radius: 12px; border: 1.5px solid #d9d4c8;
+            background: #fff; text-decoration: none; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+            cursor: pointer;
+        }
+        .portal-btn:hover { border-color: var(--gold); box-shadow: 0 0 0 3px rgba(201,168,76,.15); transform: translateY(-2px); }
+        .portal-icon { font-size: 2.2rem; margin-bottom: 0.7rem; }
+        .portal-label { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink); margin-bottom: 0.25rem; }
+        .portal-sub { font-size: 0.75rem; color: var(--muted); text-align: center; }
+
+        .divider { display: flex; align-items: center; gap: 1rem; margin: 1.2rem 0; color: #ccc; font-size: 0.8rem; }
+        .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: #e2ddd5; }
+
+        @keyframes slideLeft { from { opacity:0; transform: translateX(-30px); } to { opacity:1; transform: translateX(0); } }
+        @keyframes slideUp   { from { opacity:0; transform: translateY(24px); }  to { opacity:1; transform: translateY(0); } }
+        @media (max-width: 700px) { body { flex-direction: column; } .left-panel { width: 100%; min-height: 220px; padding: 2rem; justify-content: center; } .features { display: none; } .brand-name { font-size: 2.8rem; } }
+    </style>
+</head>
+<body>
+    <div class="left-panel">
+        <div class="watermark">U</div>
+        <div class="brand">
+            <div class="brand-name">UNI<span>HUB</span></div>
+            <div class="brand-tagline">Student Academic Support System</div>
+            <div class="features">
+                <div class="feature"><div class="feature-dot"></div>Track attendance &amp; get shortage alerts</div>
+                <div class="feature"><div class="feature-dot"></div>Plan assignments with deadline reminders</div>
+                <div class="feature"><div class="feature-dot"></div>Discover scholarships in one place</div>
+                <div class="feature"><div class="feature-dot"></div>Your academic dashboard, always updated</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="right-panel">
+        <div class="form-card">
+            <div class="form-header">
+                <h2>Welcome to UNIHUB</h2>
+                <p>Select your portal to continue</p>
+            </div>
+
+            <div class="portal-grid">
+                <a href="/student-login" class="portal-btn">
+                    <div class="portal-icon">🎓</div>
+                    <div class="portal-label">Student</div>
+                    <div class="portal-sub">Access your academic dashboard</div>
+                </a>
+                <a href="/teacher-login" class="portal-btn">
+                    <div class="portal-icon">📚</div>
+                    <div class="portal-label">Teacher</div>
+                    <div class="portal-sub">Manage students &amp; records</div>
+                </a>
+            </div>
+
+            <div class="divider">secure login</div>
+            <p style="text-align:center; font-size:0.82rem; color:var(--muted);">
+                Choose the correct portal to access your account.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
