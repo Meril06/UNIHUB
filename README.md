@@ -69,7 +69,7 @@ into MySQL.
 ### 4. Run Application
 
 ```bash
-mvn spring-boot:run
+mvnw spring-boot:run
 ```
 
 ## Templates
